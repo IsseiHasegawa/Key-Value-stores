@@ -1,0 +1,4 @@
+/Users/issei/test-file/Key-Value-stores/build/CMakeFiles/kvnode.dir
+/Users/issei/test-file/Key-Value-stores/build/CMakeFiles/kv_workload.dir
+/Users/issei/test-file/Key-Value-stores/build/CMakeFiles/edit_cache.dir
+/Users/issei/test-file/Key-Value-stores/build/CMakeFiles/rebuild_cache.dir
