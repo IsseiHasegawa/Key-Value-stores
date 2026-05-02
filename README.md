@@ -88,6 +88,24 @@ python3 tests/test_kvstore.py
 python3 tests/test_implementation.py
 ```
 
+## Error handling and validation
+
+**`kvnode`**
+
+- **CLI**: Unknown flags print `usage` and exit with code 1. Required fields are checked: non-empty `--id`, positive `--port`, non-empty `--log_path`. `--repl_mode` must be `none`, `sync`, or `async`; `--fd_algo` must be `fixed` or `phi`; heartbeat interval/timeout and `phi_threshold` must be positive.
+- **Primary without peer**: If `--primary` is set but `--peer` is omitted, the node prints a **warning** and runs with heartbeat/replication disabled (intended for isolated / WAL-focused tests).
+- **Runtime**: Failures to bind the listen port, open the JSONL log or optional WAL, parse `host:port` for `--peer`, or connect to the peer for heartbeat/replication are reported on **stderr** and prevent normal startup where appropriate.
+- **Shutdown**: `SIGINT` / `SIGTERM` trigger an orderly stop (see `signal_handler` in `main.cpp`).
+
+**`kv_workload`**
+
+- **CLI**: `--target` and `--log_path` are required. `--target` must parse as `host:port` (same rules as the node peer address). The log path must be openable for writing.
+- **Runtime**: Per-client TCP connection failures and reconnect exhaustion are logged to **stderr**; at shutdown, each client prints success/fail/stale-read counts (including RYW / version checks when using multiple clients).
+
+**Automated checks**
+
+The Python tests under `tests/` exercise KV semantics and integration; run them after changing parsing, replication, or failure-detection behavior.
+
 ## How This Connects to Data Collection
 
 This repository alone does not run the full experiment analysis pipeline.  
